@@ -1,0 +1,46 @@
+const minPasswordLength = 7;
+const maxPasswordLength = 50;
+
+const minUsernameLength = 3;
+const maxUsernameLength = 30;
+
+let isPasswordValid = (pass) => {
+    return pass.length >= minPasswordLength && pass.length <= maxPasswordLength;
+}
+
+let isUsernameValid = (username) => {
+    return username.length >= minUsernameLength && username.length <= maxUsernameLength;
+}
+
+let arePasswordsEqual = (password1, password2) => {
+    return password1 === password2;
+}
+
+let validateRegistrationForm = (form) => {
+    let passwordValidation= isPasswordValid(form.password);
+    let usernameValidation = isUsernameValid(form.username);
+    let passwordsEqualValidation = arePasswordsEqual(form.password, form.passwordRepeated);
+
+    let validationResult = {
+        isValid: true
+    };
+
+    if(!passwordValidation) {
+        validationResult.isValid = false;
+        validationResult.passwordError = true;
+    }
+    if(!usernameValidation) {
+        validationResult.isValid = false;
+        validationResult.usernameError = true;
+    } 
+    if(!passwordsEqualValidation) {
+        validationResult.isValid = false;
+        validationResult.passwordsEqualError = true;
+    }
+
+    return validationResult;
+}
+
+module.exports = {
+    validateRegistrationForm: validateRegistrationForm
+}
