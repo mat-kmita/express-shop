@@ -1,0 +1,27 @@
+<html>
+    <head>
+        <title>Rejestracja</title>
+    </head>
+    <body>
+        <form action="/register" method="POST">
+            <% if (locals.usernameError) { %>
+                <h4> Niepoprawna nazwa użytkownika. Nazwa użytkownika powinna mieć między 3 a 30 znaków</h4>
+            <% } %>
+            <% if (locals.usernameTaken) { %>
+                <h4> Ta nazwa użytkownika jest już zajęta</h4>
+            <% } %>
+            <input type="text" placeholder="Nazwa użytkownika" id="usernameInput" name="username">
+            <br>
+            <% if (locals.passwordError) { %>
+                <h4> Niepoprawne hasło. Hasło powinno mieć między 7 a 50 znaków.</h4>
+            <% } %>
+            <input type="password" placeholder="Hasło" id="passwordInput" name="password"><br>
+            <% if (locals.passwordRepeatError) { %>
+                <h4> Hasła muszą się zgadzać. </h4>
+            <% } %>
+            <input type="password" placeholder="Powtórz hasło" id="passwordRepeatInput" name="passwordRepeated"><br>
+            <input type="submit" value="Zarejestruj">
+        </form>
+    </body>
+</html>
+

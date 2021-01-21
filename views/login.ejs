@@ -1,0 +1,19 @@
+<html>
+    <head>
+        <title>Logowanie</title>
+    </head>
+    <body>
+        <% if (locals.welcome) { %>
+            <h2>Pomyślnie założyłeś konto. Możesz się teraz zalogować.</h2>
+        <% } %>
+        <% if (locals.invalidInput) { %>
+            <h2>Nazwa użytkownika lub hasło niepoprawne</h2>
+        <% } %>
+        <form action="/login" method="POST">
+            <input type="text" placeholder="Nazwa użytkownika" id="usernameInput" name="username"><br>
+            <input type="password" placeholder="Hasło" id="passwordInput" name="password"><br>
+            <input type="submit" value="Zaloguj">
+        </form>
+    </body>
+</html>
+
