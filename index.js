@@ -7,12 +7,13 @@ const db = require('./db');
 const repository = require('./repository')(db.connection);
 const validators = require('./validators');
 
+const hashingRounds = 12;
+
 let app = express();
 app.set('view engine', 'ejs');
 app.set('views', './views');
 
-const hashingRounds = 12;
-
+app.use(express.static('./static'));
 app.use(express.urlencoded({extended:true}));
 app.use(session({
     store: new pgSession({
@@ -24,7 +25,7 @@ app.use(session({
 }));
 
 app.get('/', (req, res) => {
-    res.end("Hello!");
+    return res.render('index');
 });
 
 app.get('/login', (req, res, next) => {
@@ -119,4 +120,4 @@ app.post('/login', async (req, res, next) => {
 });
 
 
-http.createServer(app).listen(3000);
+http.createServer(app).listen(8080);
