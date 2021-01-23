@@ -25,7 +25,10 @@ app.use(session({
 }));
 
 app.get('/', (req, res) => {
-    return res.render('index');
+    let model = {
+        isLoggedIn: req.session.sessionValue? true: false
+    };
+    return res.render('index', model);
 });
 
 app.get('/login', (req, res, next) => {
@@ -33,7 +36,9 @@ app.get('/login', (req, res, next) => {
         return next();
 
     if(!req.session.sessionValue)
-        return res.render('login');
+        return res.render('login', {
+            action: '/login'
+        });
     else
         return res.redirect('/');
 }, (req, res) => {
@@ -48,12 +53,15 @@ app.get('/login', (req, res, next) => {
     }
 
     res.render('login', {
-        welcome: true
+        welcome: true,
+        action: '/login'
     });
 });
 
 app.get('/register', (req, res) => {
-    res.render('register');
+    res.render('register', {
+        action: '/register'
+    });
 });
 
 app.post('/register', async (req, res) => {
@@ -68,7 +76,8 @@ app.post('/register', async (req, res) => {
         res.render('register', {
             usernameError: validationResult.usernameError,
             passwordError: validationResult.passwordError,
-            passwordRepeatError: validationResult.passwordsEqualError
+            passwordRepeatError: validationResult.passwordsEqualError,
+            action: '/register'
         });
         return;
     }
@@ -81,7 +90,8 @@ app.post('/register', async (req, res) => {
 
     if(!result)
         return res.render('register', {
-            usernameTaken: true
+            usernameTaken: true,
+            action: '/register'
         });
 
     res.redirect('/login?welcome=1');
@@ -95,14 +105,16 @@ app.post('/login', async (req, res, next) => {
 
     if( null === user)
         return res.render('login', {
-            invalidInput: true
+            invalidInput: true,
+            action: '/login'
         });
     else {
         let isPasswordValid = await bcrypt.compare(password, user.password_hash);
 
         if(!isPasswordValid) {
             return res.render('login', {
-                invalidInput: true
+                invalidInput: true,
+                action: '/login'
             });
         }
     }
