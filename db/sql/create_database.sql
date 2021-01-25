@@ -21,7 +21,13 @@ CREATE TABLE IF NOT EXISTS users(
     id SERIAL NOT NULL UNIQUE,
     username TEXT PRIMARY KEY ,
     password_hash TEXT NOT NULL,
-    address TEXT
+    first_name TEXT,
+    last_name TEXT,
+    address_street TEXT,
+    address_building_number INTEGER,
+    address_flat_number INTEGER,
+    address_city TEXT,
+    address_postal_code TEXT
 );
 
 CREATE TABLE IF NOT EXISTS orders(
