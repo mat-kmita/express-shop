@@ -1,5 +1,10 @@
 const {ParameterizedQuery} = require('pg-promise');
 
+
+function prepareUpdateQuery(tableName, map) {
+    let query = 'UPDATE '
+}
+
 class UserRepository {
     constructor(conn) {
         this.conn = conn;
@@ -42,7 +47,38 @@ class UserRepository {
     } 
 
     async update(user) {
+        const column_names = {
+            'fistName': 'first_name',
+            'lastName': 'last_name',
+            'street': 'address_street',
+            'buildingNumber': 'address_building_number',
+            'flatNumber': 'address_flat_number',
+            'postalCode': 'address_postal_code',
+            'city': 'address_city'
+        };
+        let text = 'UPDATE users SET ';
 
+        let queryText = '';
+        for (let field in user) {
+            if (user[field].len > 0) {
+
+            }
+        }
+
+        // const query = new ParameterizedQuery({
+        //     text: p
+        // })
+
+        // try {
+        //     await this.conn.none(query);
+        // } catch(err) {
+        //     console.error("Error while inserting user into database!");
+        //     console.error(err.message);
+        //     console.error(err.code);
+        //     return false;
+        // }
+
+        return {};
     }
 
     async delete(user) {
@@ -50,8 +86,112 @@ class UserRepository {
     }
 }
 
+class ProductsRepository {
+    constructor(conn) {
+        this.conn = conn;
+    }
+
+    async getById(id) {
+
+    }
+
+    async getAll() {
+
+    }
+
+    async getAllInCategory(categoryId) {
+
+    }
+
+    async findByName(search) {
+
+    }
+}
+
+class CategoriesRepository {
+    constructor(conn) {
+        this.conn = conn;
+    }
+
+    async getAll() {
+        const query = "SELECT * FROM categories";
+
+        var result;
+        try {
+            result = await this.conn.manyOrNone(query);
+        } catch(err) {
+            console.error('Error while retrieving user from database!');
+            console.error(err.message);
+            result = null;
+        }
+
+        return result;
+    }
+
+    async insert(category) {
+
+    }
+}
+
+class OrdersRepository {
+    constructor(conn) {
+        this.conn = conn;
+    }
+
+    async get(orderId) {
+        let query = 'SELECT * FROM orders WHERE id = $1';
+        let result;
+
+        try {
+            result = this.conn.oneOrNone(query, [orderId]);
+        } catch(err) {
+            console.error('Error while retrieving order with id ' + orderId);
+            console.error(err.message);
+            result = null;
+        }
+
+        return result;
+    }
+
+    async getPage(userId, pageNumber, pageLength) {
+        let query = 'SELECT * FROM orders WHERE user_id = $1 ORDER BY date OFFSET $2 ROWS FETCH NEXT $3 ROWS ONLY';
+        let result;
+
+        try {
+            result = await this.conn.manyOrNone(query, [userId, pageLength * (pageNumber - 1), pageLength]);
+        } catch(err) {
+            console.error('Error while retrieving orders from database!');
+            console.error(err.message);
+            result = null;
+        }
+
+        console.log(`Fetch result: ${result}`);
+
+        return result;
+    }
+
+    async getCountForUser(userId) {
+        let query = 'SELECT count(*) AS count FROM orders WHERE user_id = $1';
+        let result;
+
+        try {
+            result = await this.conn.oneOrNone(query, [userId]);
+        } catch(err) {
+            console.error('Error while retrieving count of orders for user');
+            console.error(err.message);
+            result = null;
+        }
+
+        // console.log(JSON.stringify(result));
+
+        return result;
+    }
+}
+
 module.exports = function(conn) {
     return {
-        UserRepository: new UserRepository(conn)
+        UserRepository: new UserRepository(conn),
+        CategoriesRepository: new CategoriesRepository(conn),
+        OrdersRepository: new OrdersRepository(conn)
     }
 }
