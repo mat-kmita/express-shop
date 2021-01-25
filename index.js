@@ -20,15 +20,74 @@ app.use(session({
         pgPromise: db.connection,
     }),
     secret: "sekretne_haslo",
-    resave: true,
-    saveUninitialized: true,
+    resave: false,
+    saveUninitialized: false,
 }));
 
-app.get('/', (req, res) => {
-    let model = {
-        isLoggedIn: req.session.sessionValue? true: false
-    };
-    return res.render('index', model);
+class ShopModel {
+    constructor(session) {
+        this.cart = session? session.cart : null;
+        this.user = session? session.user: null;
+    }
+
+    isAdminSession() {
+        return false;
+    }
+
+    isUserLoggedIn() {
+        return this.user? true: false;
+    }
+
+    getModel() {
+        return {
+            loggedIn: this.isUserLoggedIn(),
+            cart: this.cart,
+            user: this.user
+        }
+    }
+
+    logIn(user) {
+        return null;
+    }
+
+    logOut() {
+        // this. = null;
+    }
+}
+
+let globalCategories = [];
+
+app.get(['/orders', '/data'], (req, res, next) => {
+    // let sessionWrapper = new ShopModel(req.session.sessionValue);
+    if(!req.session.sessionValue) {
+        return res.status(401).end('Access denied!');    
+    }
+    next();
+});
+
+app.get(['/orders/:orderId'], async (req, res, next) => {
+    if(!req.session.sessionValue) {
+        return res.status(403).end('You dont have access to any order!!');
+    } else {
+        let orderData = await repository.OrdersRepository.get(req.params['orderId']);
+
+        console.log(`ORder data: ${JSON.stringify(orderData)}`);
+        if(orderData.user_id != req.session.sessionValue.user.id) {
+            return res.status(403).end('It\'s not your order!');
+        }
+    }
+    next();
+});
+
+app.get('/', async (req, res) => {
+
+    let sessionWrapper = new ShopModel(req.session.sessionValue);
+    console.log(req.session.sessionValue);
+    console.log(sessionWrapper.getModel());
+    return res.render('index', {
+        session: sessionWrapper.getModel(),
+        categories: globalCategories
+    });
 });
 
 app.get('/login', (req, res, next) => {
@@ -56,6 +115,40 @@ app.get('/login', (req, res, next) => {
         welcome: true,
         action: '/login'
     });
+});
+
+app.post('/login', async (req, res, next) => {
+    var username = req.body.username;
+    var password = req.body.password;
+
+    var user = await repository.UserRepository.get(username);
+    console.log(`User in login: ${user}`);
+
+    if( null === user)
+        return res.render('login', {
+            invalidInput: true,
+            action: '/login'
+        });
+    else {
+        let isPasswordValid = await bcrypt.compare(password, user.password_hash);
+
+        if(!isPasswordValid) {
+            return res.render('login', {
+                invalidInput: true,
+                action: '/login'
+            });
+        }
+    }
+
+    if(!req.session.sessionValue) {
+        req.session.sessionValue = {
+            user: user
+        }
+    } 
+    req.session.save((err) => {
+        res.redirect('/');
+    });
+
 });
 
 app.get('/register', (req, res) => {
@@ -96,40 +189,113 @@ app.post('/register', async (req, res) => {
 
     res.redirect('/login?welcome=1');
 });
- 
-app.post('/login', async (req, res, next) => {
-    var username = req.body.username;
-    var password = req.body.password;
 
-    var user = await repository.UserRepository.get(username);
+app.get('/data', async (req, res) => {
+    let sessionWrapper = new ShopModel(req.session.sessionValue);
 
-    if( null === user)
-        return res.render('login', {
-            invalidInput: true,
-            action: '/login'
-        });
-    else {
-        let isPasswordValid = await bcrypt.compare(password, user.password_hash);
+    console.log(sessionWrapper.getModel())
 
-        if(!isPasswordValid) {
-            return res.render('login', {
-                invalidInput: true,
-                action: '/login'
-            });
-        }
+    let userData = await repository.UserRepository.get(req.session.sessionValue.user);
+
+    let model = {
+        session: sessionWrapper.getModel(),
+        categories: globalCategories,
+        address: userData
     }
 
-    if(!req.session.sessionValue) {
-        req.session.sessionValue = {
-            user: username
-        }
-    } else {
-        res.end("Już jesteś zalogowany!");
-        return;
-    }
+    console.log(model.address);
 
-    res.end("Zalogowano!");
+    res.render('data', model);
 });
 
+app.post('/data', async (req, res) => {
+    let newUser = {
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        street: req.body.street,
+        buildingNumber: req.body.buildingNumber,
+        flatNumber: req.body.flatNumber,
+        city: req.body.city,
+        postalCode: req.body.postalCode
+    }
+    let newUserData = await repository.UserRepository.update(newUser);
 
-http.createServer(app).listen(8080);
+
+    let model = {
+        isLoggedIn: req.session.sessionValue? true: false,
+        address: newUserData,
+        isUpdated: true
+    }
+
+
+    res.render('data', model);
+});
+
+function createPaginationModel(pageSize, currentPage, elementsCount) {
+    let result = {};
+    if(elementsCount == 0) {
+        result.empty = true;
+    } else {
+        result.empty = false;
+
+        if(elementsCount <= pageSize) {
+            result.showPreviousButton = false;
+            result.showNextButton = false;
+        } else {
+            const maxPage = Math.ceil(elementsCount / pageSize);
+            console.log(`Max page: ${maxPage}`);
+            result.showPreviousButton = currentPage != 1;
+            result.showNextButton = currentPage != maxPage;
+        }
+    }
+
+    return result;
+}
+
+app.get('/orders', async (req, res) => {
+    const PAGE_SIZE = 2;
+
+    let sessionWrapper = new ShopModel(req.session.sessionValue);
+    console.log(req.query);
+    let currentPage = req.query.page? parseInt(req.query.page): 1;
+
+    console.log(`Page: ${currentPage}`)
+    let ordersCountForUser = await repository.OrdersRepository.getCountForUser(sessionWrapper.user.id);
+    let ordersData = await repository.OrdersRepository.getPage(sessionWrapper.user.id, parseInt(currentPage), PAGE_SIZE);
+    let paginationModel = createPaginationModel(PAGE_SIZE, currentPage, ordersCountForUser.count);
+
+    console.log(`Data: ${ordersData}, page: ${currentPage}`);
+
+    console.log(ordersCountForUser);
+    let pageModel = {
+        page: currentPage,
+        data: ordersData,
+    };
+    console.log(pageModel.data);
+    return res.render('orders', {
+        session: sessionWrapper.getModel(),
+        categories: globalCategories,
+        model: pageModel,
+        paginationModel: paginationModel
+    });
+});
+
+app.get('/orders/:orderId', (req, res) => {
+    res.end('hello in order ' + req.params.orderId);
+})
+
+
+app.get('/logout', (req, res) => {
+    req.session.destroy((err) => {
+        res.redirect('/');
+    })
+})
+
+async function main() {
+    db.initializeDatabase();
+    globalCategories = await repository.CategoriesRepository.getAll();
+
+    http.createServer(app).listen(8080);
+}
+
+main();
