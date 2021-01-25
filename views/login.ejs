@@ -52,10 +52,14 @@
 
         <main class="form-signin">
             <% if (locals.welcome) { %>
-                <h2 class="h3 mb-3 fw-normal text-success">Pomyślnie założyłeś konto. Możesz się teraz zalogować.</h2>
+                <div class="alert alert-success" role="alert">
+                    Założono konto! Możesz się teraz zalogować.
+                </div>
             <% } %>
             <% if (locals.invalidInput) { %>
-                <h2 class="h3 mb-3 fw-normal text-danger">Nazwa użytkownika lub hasło niepoprawne</h2>
+                <div class="alert alert-danger" role="alert">
+                    Nazwa użytkownika lub hasło niepoprawne
+                </div>
             <% } %>
             <%- include('login-form'); %>
         </main>

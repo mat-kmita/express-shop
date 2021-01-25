@@ -1,20 +1,28 @@
 <form action="<%= action %>" method="POST">
     <h1 class="h3 mb-3 fw-normal">Formularz rejestracji</h1>
     <% if (locals.usernameError) { %>
-        <h4 class="h3 mb-3 fw-normal text-danger"> Niepoprawna nazwa użytkownika. Nazwa użytkownika powinna mieć między 3 a 30 znaków</h4>
+        <div class="alert alert-danger" role="alert">
+            Niepoprawna nazwa użytkownika. Nazwa użytkownika powinna mieć między 3 a 30 znaków        
+        </div>
     <% } %>
     <% if (locals.usernameTaken) { %>
-        <h4 class="h3 mb-3 fw-normal text-danger"> Ta nazwa użytkownika jest już zajęta</h4>
+        <div class="alert alert-danger" role="alert">
+            Ta nazwa użytkownika jest już zajęta       
+        </div>
     <% } %>
     <label for="usernameInput" class="visually-hidden">Nazwa użytkownika</label>
     <input type="text" placeholder="Nazwa użytkownika" id="usernameInput" name="username" class="form-control" required autofocus>
     <% if (locals.passwordError) { %>
-        <h4 class="h3 mb-3 fw-normal text-danger"> Niepoprawne hasło. Hasło powinno mieć między 7 a 50 znaków.</h4>
+        <div class="alert alert-danger" role="alert">
+            Niepoprawne hasło. Hasło powinno mieć między 7 a 50 znaków.        
+        </div>
     <% } %>
     <label for="passwordInput" class="visually-hidden">Hasło</label>
     <input type="password" placeholder="Hasło" id="passwordInput" name="password" class="form-control" required>
     <% if (locals.passwordRepeatError) { %>
-        <h4 class="h3 mb-3 fw-normal text-danger"> Hasła muszą się zgadzać. </h4>
+        <div class="alert alert-danger" role="alert">
+            Hasła muszą być takie same.        
+        </div>
     <% } %>
     <label for="passwordRepeatInput" class="visually-hidden">Powtórz hasło</label>
     <input type="password" placeholder="Powtórz hasło" id="passwordRepeatInput" name="passwordRepeated" class="form-control" required>

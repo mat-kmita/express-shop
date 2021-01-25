@@ -7,31 +7,44 @@
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="#">Home</a>
+            <a class="nav-link active" aria-current="page" href="/">Home</a>
           </li>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               Kategorie
             </a>
             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <li><a class="dropdown-item" href="#">Action</a></li>
-              <li><a class="dropdown-item" href="#">Another action</a></li>
-              <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item" href="#">Something else here</a></li>
+              <% if (categories.len != 0) { %>
+                <% categories.forEach(function(category) { %>
+                <li><a class="dropdown-item" href="/category/<%= category.id %>"><%= category.name %></a></li>
+                <% }) %>
+              <% } else { %>
+                <li><a class="dropdown-item" href="#">Brak kategori!!!</a></li>
+              <% } %>
             </ul>
           </li>
-          <% if (locals.isLoggedIn) { %>
+          <% if (session.loggedIn) { %>
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 Moje konto
                 </a>
                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <li><a class="dropdown-item" href="#">Mój koszyk</a></li>
-                    <li><a class="dropdown-item" href="#">Moje zamówienia</a></li>
-                    <li></li><a class="dropdown-item" href="#">Moje dane</a></li>
+                    <li><a class="dropdown-item" href="/orders">Moje zamówienia</a></li>
+                    <li></li><a class="dropdown-item" href="/data">Moje dane</a></li>
                     <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="#">Wyloguj</a></li>
+                    <li><a class="dropdown-item" href="/logout">Wyloguj</a></li>
                 </ul>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Mój koszyk
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item" href="#">Produkt 1</a></li>
+                <li><a class="dropdown-item" href="#">Produkt 2</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item link-primary" href="#">Złóż zamówienie</a></li>
+              </ul>
             </li>
         <% } else { %>
             <li class="nav-item">
@@ -42,8 +55,8 @@
             </li>
         <% } %>
         </ul>
-        <form class="d-flex justify-content-center">
-          <input class="form-control me-2" type="search" placeholder="Znajdź produkt" aria-label="Search">
+        <form class="d-flex justify-content-center" action="/search" method="GET">
+          <input class="form-control me-2" type="search" placeholder="Znajdź produkt" aria-label="Search" name="query">
           <button class="btn btn-outline-success" type="submit">Szukaj</button>
         </form>
         
