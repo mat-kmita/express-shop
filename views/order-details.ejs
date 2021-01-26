@@ -1,0 +1,57 @@
+<html>
+    <head>
+        <title>Sklep - zamówienie nr <%= model.orderId %></title>
+        <meta charset="utf-8"/>
+
+        <link href="/css/bootstrap.min.css" rel="stylesheet"/>
+    </head>
+    <body>
+        <%- include('topbar'); %>
+
+        <div class="container">
+            <main>
+                <div class="py-5 text-center">
+                    <h2>Szczegóły zamówienia</h2>
+                    <p class="lead">Szczegółowe informacje o zamówieniu nr <%= model.orderId %></p>
+                </div>
+
+                <table class="table table-lg m-0">
+                    <thead class="">
+                        <tr>
+                            <th>Nazwa produktu</th>
+                            <th>Ilość</th>
+                            <th>Cena za sztukę</th>
+                            <th>Cena całkowita</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% model.products.forEach(function(product) { %>
+                            <tr>
+                                <td>
+                                    <a href="/products/<%= product.id %>">
+                                        <%= product.name %>
+                                    </a>
+                                </td>
+                                <td><%= product.quantity %></td>
+                                <td><%= product.singlePrice %> zł.</td>
+                                <td><%= product.price %> zł.</td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+                <div class="container">
+                    <div class="row">
+                        <div class="col">
+                            <p class="text-start"><a href="/orders">Powrót do wszystkich zamówień</a></p>
+                        </div>
+                        <div class="col">
+                            <p class="text-end"><strong>Cena całkowita: <%= model.totalPrice %> zł.</strong</p>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+          
+        <script src="/js/bootstrap.bundle.min.js"></script>
+    </body>
+</html>

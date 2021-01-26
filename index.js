@@ -280,8 +280,46 @@ app.get('/orders', async (req, res) => {
     });
 });
 
-app.get('/orders/:orderId', (req, res) => {
-    res.end('hello in order ' + req.params.orderId);
+function createProductsList(data) {
+    let result = data.map(v => {
+        return {
+            id: v['product_id'],
+            name: v['name'],
+            quantity: v['quantity'],
+            singlePrice: v['price'] / 100,
+            price: v['price'] * v['quantity'] / 100
+        }
+    });
+    let totalPrice = result.reduce( (acc, v) => {
+        return acc + v.price;
+    }, 0);
+
+    console.log(`Total price: ${totalPrice}`);
+
+    return {
+        products: result,
+        totalPrice: totalPrice
+    }
+}
+
+app.get('/orders/:orderId', async (req, res) => {
+    let sessionWrapper = new ShopModel(req.session.sessionValue);
+
+    let orderDetails = await repository.OrdersProductsRepository.getProductsForOrder(req.params['orderId']);
+
+    let data = createProductsList(orderDetails);
+
+    let model = {
+        orderId: req.params['orderId'],
+        products: data.products,
+        totalPrice: data.totalPrice
+    }
+    console.log(JSON.stringify(data));
+    res.render('order-details', {
+        model: model,
+        categories: globalCategories,
+        session: sessionWrapper.getModel(),
+    })
 })
 
 
