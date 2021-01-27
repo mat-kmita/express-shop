@@ -18,7 +18,7 @@ async function initializeDatabase() {
     } catch(err) {
         console.error("Error while initializing database.");
         console.error(err.message);
-        exit(1);
+        // exit(1);
     }
 }
 
