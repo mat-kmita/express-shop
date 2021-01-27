@@ -261,7 +261,7 @@ app.get('/orders', async (req, res) => {
 
     console.log(`Page: ${currentPage}`)
     let ordersCountForUser = await repository.OrdersRepository.getCountForUser(sessionWrapper.user.id);
-    let ordersData = await repository.OrdersRepository.getPage(sessionWrapper.user.id, parseInt(currentPage), PAGE_SIZE);
+    let ordersData = await repository.OrdersRepository.getPageForUser(sessionWrapper.user.id, parseInt(currentPage), PAGE_SIZE);
     let paginationModel = createPaginationModel(PAGE_SIZE, currentPage, ordersCountForUser.count);
 
     console.log(`Data: ${ordersData}, page: ${currentPage}`);
@@ -328,6 +328,179 @@ app.get('/logout', (req, res) => {
         res.redirect('/');
     })
 })
+
+
+app.get(['/admin', '/admin/*'], (req, res, next) => {
+    if(!req.session.adminSession) {
+        return res.render('login', {
+            action: '/admin/login'
+        });
+    }
+
+    next();
+});
+
+app.post('/admin/login', async (req, res) => {
+    var username = req.body.username;
+    var password = req.body.password;
+
+    var user = await repository.AdminsRepository.get(username);
+    console.log(`User in login: ${user}`);
+
+    if( null === user)
+        return res.render('login', {
+            invalidInput: true,
+            action: '/admin/login'
+        });
+    else {
+        let isPasswordValid = await bcrypt.compare(password, user.password_hash);
+
+        if(!isPasswordValid) {
+            return res.render('login', {
+                invalidInput: true,
+                action: '/admin/login'
+            });
+        }
+    }
+
+    if(!req.session.adminSession) {
+        req.session.adminSession = {
+            user: user
+        }
+    } 
+    req.session.save((err) => {
+        res.redirect('/admin');
+    });
+})
+
+app.get('/admin', async (req, res) => {
+    res.render('admin-page');
+});
+
+app.get('/admin/logout', (req, res) => {
+    req.session.destroy((err) => {
+        return res.redirect('/admin');
+    });
+});
+
+app.get('/admin/products', async (req, res) => {
+    let pageInt = (!req.query.page)? 1: parseInt(req.query.page);
+
+    let productsCount = await repository.ProductsRepository.getCountOfProducts();
+    let productsData = await repository.ProductsRepository.getPage(pageInt, 10);
+
+    return res.render('admin-products', {
+        paginationModel: createPaginationModel(10, pageInt, productsCount.count),
+        model: {
+            data: productsData,
+            page: pageInt
+        }
+    });
+})
+
+app.get('/admin/products/new', async (req, res) => {
+    res.render('admin-new-product', {
+        product: {}
+    });
+});
+
+app.post('/admin/products/new', async (req, res) => {
+    let newProduct = {
+        name: req.body.name,
+        description: req.body.description,
+        price: parseFloat(req.body.price) * 100
+    }
+
+    // if(!validateProduct(newProduct)) {
+    //     return res.end('Invalid input!');
+    // }
+
+    let result = await repository.ProductsRepository.insert(newProduct);
+
+    if(result == null) {
+    }
+
+    res.end('addedd new product!');
+});
+
+app.get('/admin/products/edit/:productId', async (req, res, next) => {
+    let productId = parseInt(req.params.productId);
+    let productData = await repository.ProductsRepository.get(productId);
+
+    if(productData == null) return next();
+
+    let editedProduct = {
+        name: productData.name,
+        description: productData.description,
+        price: productData.price / 100
+    };
+
+    res.render('admin-edit-product', {
+        product: editedProduct
+    });
+}, (req, res) => {
+    res.end('Invalid id!');
+});
+
+app.post('/admin/products/edit/:productId', async (req, res) => {
+    let productId = parseInt(req.params.productId);
+    let editedProduct = {
+        name: req.body.name,
+        description: req.body.description,
+        price: parseInt(req.body.price) * 100
+    }
+    let result = await repository.ProductsRepository.update(productId, editedProduct);
+
+    if(result == null) {
+        return res.end('Something wrong!');
+    }
+
+    res.end('finished editing!');
+});
+
+app.get('/admin/products/delete/:productId', async (req, res) => {
+    let productIdInt = parseInt(req.params.productId);
+    let result = await repository.ProductsRepository.delete(productIdInt);
+
+    res.end('deleted');
+
+});
+
+app.get('/admin/users', async (req, res) => {
+    let pageInt = req.query.page? parseInt(req.query.page): 1;
+
+    console.log(pageInt);
+    let usersCount = await repository.UserRepository.getCountOfUsers();
+    let usersData = await repository.UserRepository.getPage(pageInt, 20);
+    let paginationModel = createPaginationModel(20, pageInt, usersCount.count);
+
+    res.render('admin-users', {
+        paginationModel: paginationModel,
+        model: {
+            page: pageInt,
+            data: usersData
+        }
+    })
+});
+
+app.get('/admin/orders', async (req, res) => {
+    let pageInt = req.query.page? parseInt(req.query.page): 1;
+
+    console.log(pageInt);
+    let ordersCount = await repository.OrdersRepository.getCount();
+    let ordersData = await repository.OrdersRepository.getPage(pageInt, 20);
+    let paginationModel = createPaginationModel(20, pageInt, ordersCount.count);
+
+    res.render('admin-orders', {
+        paginationModel: paginationModel,
+        model: {
+            page: pageInt,
+            data: ordersData
+        }
+    });
+});
+// app.get()
+
 
 async function main() {
     db.initializeDatabase();
