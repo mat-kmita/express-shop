@@ -1,0 +1,18 @@
+<form method="POST">
+    <div class="mb-3">
+      <label for="nameInput" class="form-label">Nazwa produktu</label>
+      <input type="text" class="form-control" id="nameInput" aria-describedby="nameHelp" name="name" value="<%= product.name %>">
+      <div id="nameHelp" class="form-text">Podaj nazwę produktu od 10 do 50 znaków.</div>
+    </div>
+    <div class="mb-3">
+      <label for="descriptionInput" class="form-label">Opis produktu</label>
+      <textarea class="form-control" id="descriptionInput" aria-describedby="descriptionHelp" name="description" value="<%= product.description %>"></textarea>
+      <div id="descriptionHelp" class="form-text">Podaj szczegółowy opis produktu.</div>
+    </div>
+    <div class="mb-3">
+        <label for="descriptionInput" class="form-label">Cena produktu</label>
+        <input type="text" class="form-control" id="descriptionInput" aria-describedby="descriptionHelp" name="price" value="<%= product.price %>"></textarea>
+        <div id="descriptionHelp" class="form-text">Podaj cenę produktu w polskich złotych.</div>        
+    </div>
+    <button type="submit" class="btn btn-primary">Dodaj</button>
+  </form>
