@@ -324,13 +324,11 @@ class AdminsRepository {
     }
 }
 
-module.exports = function(conn) {
-    return {
-        UserRepository: new UserRepository(conn),
-        CategoriesRepository: new CategoriesRepository(conn),
-        OrdersRepository: new OrdersRepository(conn),
-        OrdersProductsRepository: new OrdersProductsRepository(conn),
-        ProductsRepository: new ProductsRepository(conn),
-        AdminsRepository: new AdminsRepository(conn)
-    }
+module.exports =  {
+        UserRepository: UserRepository,
+        CategoriesRepository: CategoriesRepository,
+        OrdersRepository: OrdersRepository,
+        OrdersProductsRepository: OrdersProductsRepository,
+        ProductsRepository: ProductsRepository,
+        AdminsRepository: AdminsRepository
 }
