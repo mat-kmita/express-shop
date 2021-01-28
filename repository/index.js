@@ -175,30 +175,6 @@ class ProductsRepository {
 
 }
 
-class CategoriesRepository {
-    constructor(conn) {
-        this.conn = conn;
-    }
-
-    async getAll() {
-        const query = "SELECT * FROM categories";
-
-        var result;
-        try {
-            result = await this.conn.manyOrNone(query);
-        } catch(err) {
-            console.error('Error while retrieving user from database!');
-            console.error(err.message);
-            result = null;
-        }
-
-        return result;
-    }
-
-    async insert(category) {
-
-    }
-}
 
 class OrdersRepository {
     constructor(conn) {
@@ -326,7 +302,6 @@ class AdminsRepository {
 
 module.exports =  {
         UserRepository: UserRepository,
-        CategoriesRepository: CategoriesRepository,
         OrdersRepository: OrdersRepository,
         OrdersProductsRepository: OrdersProductsRepository,
         ProductsRepository: ProductsRepository,

@@ -58,8 +58,6 @@ class ShopModel {
     }
 }
 
-let globalCategories = [];
-
 app.get(['/orders', '/data'], (req, res, next) => {
     // let sessionWrapper = new ShopModel(req.session.sessionValue);
     if(!req.session.sessionValue) {
@@ -88,8 +86,7 @@ app.get('/', async (req, res) => {
     console.log(req.session.sessionValue);
     console.log(sessionWrapper.getModel());
     return res.render('index', {
-        session: sessionWrapper.getModel(),
-        categories: globalCategories
+        session: sessionWrapper.getModel()
     });
 });
 
@@ -202,7 +199,6 @@ app.get('/data', async (req, res) => {
 
     let model = {
         session: sessionWrapper.getModel(),
-        categories: globalCategories,
         address: userData
     }
 
@@ -277,7 +273,6 @@ app.get('/orders', async (req, res) => {
     console.log(pageModel.data);
     return res.render('orders', {
         session: sessionWrapper.getModel(),
-        categories: globalCategories,
         model: pageModel,
         paginationModel: paginationModel
     });
@@ -320,7 +315,6 @@ app.get('/orders/:orderId', async (req, res) => {
     console.log(JSON.stringify(data));
     res.render('order-details', {
         model: model,
-        categories: globalCategories,
         session: sessionWrapper.getModel(),
     })
 })
@@ -337,7 +331,6 @@ app.use('/admin', adminRoutes);
 
 async function main() {
     db.initializeDatabase();
-    // globalCategories = await repository.CategoriesRepository.getAll();
 
     http.createServer(app).listen(8080);
 }
