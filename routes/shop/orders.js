@@ -1,5 +1,5 @@
-const Pagination = require('./pagination');
-const UserSession = require('./user-session');
+const Pagination = require('../../models/pagination');
+const UserSession = require('../../models/user-session');
 
 class OrdersService {
 

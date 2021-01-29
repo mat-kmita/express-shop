@@ -1,4 +1,4 @@
-const UserSession = require('./user-session');
+const UserSession = require('../../models/user-session');
 const bcrypt = require('bcrypt');
 
 class LoginService {
