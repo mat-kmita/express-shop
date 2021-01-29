@@ -119,7 +119,7 @@
 
     <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
       <h2>Zamówienia</h2>
-      <% if(paginationModel.empty) { %>
+      <% if(page.empty) { %>
         <div class="alert alert-info" role="alert">
           Nie ma jeszcze żadnych zamówień!
         </div>
@@ -134,7 +134,7 @@
               </tr>
             </thead>
             <tbody>
-              <% model.data.forEach(function(order) { %>
+              <% orders.forEach(function(order) { %>
                 <tr>
                   <td>
                     <%= order.id %>
@@ -155,11 +155,11 @@
           </table>
           <nav aria-label="...">
             <ul class="pagination justify-content-end mt-3 mr-3">
-              <li class="page-item <%if (!paginationModel.showPreviousButton) { %> disabled <% } %>">
-                <a class="page-link" href="/admin/orders?page=<%= model.page - 1 %>">Poprzednie</a>
+              <li class="page-item <%if (page.isFirstPage) { %> disabled <% } %>">
+                <a class="page-link" href="/admin/orders?page=<%= page.currentPage - 1 %>">Poprzednie</a>
               </li>
-              <li class="page-item <%if (!paginationModel.showNextButton) { %> disabled <% } %>">
-                <a class="page-link" href="/admin/orders?page=<%= model.page + 1 %>">Następne</a>
+              <li class="page-item <%if (page.isLastPage) { %> disabled <% } %>">
+                <a class="page-link" href="/admin/orders?page=<%= page.currentPage + 1 %>">Następne</a>
               </li>
             </ul>
           </nav>

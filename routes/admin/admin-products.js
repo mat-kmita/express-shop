@@ -1,23 +1,4 @@
-function createPaginationModel(pageSize, currentPage, elementsCount) {
-    let result = {};
-    if(elementsCount == 0) {
-        result.empty = true;
-    } else {
-        result.empty = false;
-
-        if(elementsCount <= pageSize) {
-            result.showPreviousButton = false;
-            result.showNextButton = false;
-        } else {
-            const maxPage = Math.ceil(elementsCount / pageSize);
-            console.log(`Max page: ${maxPage}`);
-            result.showPreviousButton = currentPage != 1;
-            result.showNextButton = currentPage != maxPage;
-        }
-    }
-
-    return result;
-}
+const Pagination = require('../../models/pagination');
 
 class AdminProductsService {
     constructor(productsRepository) {
@@ -29,13 +10,12 @@ class AdminProductsService {
     
         let productsCount = await this.productsRepository.getCountOfProducts();
         let productsData = await this.productsRepository.getPage(pageInt, 10);
+
+        let pagination = new Pagination(10, pageInt, productsCount.count);
     
         return res.render('admin-products', {
-            paginationModel: createPaginationModel(10, pageInt, productsCount.count),
-            model: {
-                data: productsData,
-                page: pageInt
-            }
+            page: pagination.createModel(),
+            products: productsData
         });
     }
     

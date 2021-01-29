@@ -1,23 +1,4 @@
-function createPaginationModel(pageSize, currentPage, elementsCount) {
-    let result = {};
-    if(elementsCount == 0) {
-        result.empty = true;
-    } else {
-        result.empty = false;
-
-        if(elementsCount <= pageSize) {
-            result.showPreviousButton = false;
-            result.showNextButton = false;
-        } else {
-            const maxPage = Math.ceil(elementsCount / pageSize);
-            console.log(`Max page: ${maxPage}`);
-            result.showPreviousButton = currentPage != 1;
-            result.showNextButton = currentPage != maxPage;
-        }
-    }
-
-    return result;
-}
+const Pagination = require('../../models/pagination');
 
 class AdminUsersService {
     constructor(usersRepository) {
@@ -29,15 +10,12 @@ class AdminUsersService {
     
         let usersCount = await this.usersRepository.getCountOfUsers();
         let usersData = await this.usersRepository.getPage(pageInt, 20);
-        let paginationModel = createPaginationModel(20, pageInt, usersCount.count);
+        let pagination = new Pagination(20, pageInt, usersCount.count);
     
         res.render('admin-users', {
-            paginationModel: paginationModel,
-            model: {
-                page: pageInt,
-                data: usersData
-            }
-        })
+            page: pagination.createModel(),
+            users: usersData
+        });
     }
 }
 

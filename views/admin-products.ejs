@@ -120,7 +120,7 @@
     <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
       <h2>Produkty</h2>
       <a href="/admin/products/new" class="btn btn-primary">Dodaj produkt</a>
-      <% if(paginationModel.empty) { %>
+      <% if(page.empty) { %>
         <div class="alert alert-info" role="alert">
           Nie ma jeszcze żadnych produktów!
         </div>
@@ -136,7 +136,7 @@
               </tr>
             </thead>
             <tbody>
-              <% model.data.forEach(function(product) { %>
+              <% products.forEach(function(product) { %>
                 <tr>
                   <td>
                     <%= product.id %>
@@ -160,11 +160,11 @@
           </table>
           <nav aria-label="...">
             <ul class="pagination justify-content-end mt-3 mr-3">
-              <li class="page-item <%if (!paginationModel.showPreviousButton) { %> disabled <% } %>">
-                <a class="page-link" href="/admin/products?page=<%= model.page - 1 %>">Poprzednie</a>
+              <li class="page-item <%if (page.isFirstPage) { %> disabled <% } %>">
+                <a class="page-link" href="/admin/products?page=<%= page.currentPage - 1 %>">Poprzednie</a>
               </li>
-              <li class="page-item <%if (!paginationModel.showNextButton) { %> disabled <% } %>">
-                <a class="page-link" href="/admin/products?page=<%= model.page + 1 %>">Następne</a>
+              <li class="page-item <%if (page.isLastPage) { %> disabled <% } %>">
+                <a class="page-link" href="/admin/products?page=<%= page.currentPage + 1 %>">Następne</a>
               </li>
             </ul>
           </nav>
