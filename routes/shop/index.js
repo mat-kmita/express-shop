@@ -2,6 +2,7 @@ const express = require('express');
 const RestrictedAccessService = require('./restricted');
 const OrdersService = require('./orders');
 const LoginService = require('./login');
+const RegistrationService = require('./registration');
 const OrdersRepository = require('../../repository/orders-repository');
 const OrdersProductsRepository = require('../../repository/orders-products-repository'); 
 const UserRepository = require('../../repository/user-repository');
@@ -22,13 +23,13 @@ class ShopRouter {
 
         const ordersService = new OrdersService(new OrdersRepository(this.conn), new OrdersProductsRepository(this.conn));
         expressRouter.get('/orders', async (req, res) => {
-            ordersService.showOrdersListPage(req, res);
+            await ordersService.showOrdersListPage(req, res);
         })
 
         expressRouter.get('/orders/:orderId', async (req, res, next) => {
             ordersService.handleUnathorizedAccessToOrder(req, res, next);
         }, async (req, res) => {
-            ordersService.showOrderDetailsPage(req, res);
+            await ordersService.showOrderDetailsPage(req, res);
         })
 
         const loginService = new LoginService(new UserRepository(this.conn));
@@ -38,10 +39,18 @@ class ShopRouter {
             loginService.showLoginPage(req, res);
         })
         expressRouter.post('/login', async (req, res) => {
-            loginService.handleLogin(req, res);
+            await loginService.handleLogin(req, res);
         })
         expressRouter.get('/logout', (req, res) => {
             loginService.handleLogout(req, res);
+        })
+
+        const registrationService = new RegistrationService(12, new UserRepository(this.conn));
+        expressRouter.get('/register', (req, res) => {
+            registrationService.showRegistrationPage(req, res);
+        });
+        expressRouter.post('/register', async (req, res) => {
+            await registrationService.handleRegistration(req, res);
         })
 
         return expressRouter;
