@@ -1,0 +1,51 @@
+const express = require('express');
+const RestrictedAccessService = require('./restricted');
+const OrdersService = require('./orders');
+const LoginService = require('./login');
+const OrdersRepository = require('../../repository/orders-repository');
+const OrdersProductsRepository = require('../../repository/orders-products-repository'); 
+const UserRepository = require('../../repository/user-repository');
+
+class ShopRouter {
+    constructor(dbConnection) {
+        this.conn = dbConnection;
+    }
+
+    createRouter() {
+        const expressRouter = express.Router();
+
+        const restrictedAccessService = new RestrictedAccessService();
+        const restrictedPaths = ['/orders', '/orders/:id', '/cart', '/order'];
+        expressRouter.get(restrictedPaths, (req, res, next) => {
+            restrictedAccessService.allowLoggedIn('unauthorized', 'sessionValue')(req, res, next);
+        });
+
+        const ordersService = new OrdersService(new OrdersRepository(this.conn), new OrdersProductsRepository(this.conn));
+        expressRouter.get('/orders', async (req, res) => {
+            ordersService.showOrdersListPage(req, res);
+        })
+
+        expressRouter.get('/orders/:orderId', async (req, res, next) => {
+            ordersService.handleUnathorizedAccessToOrder(req, res, next);
+        }, async (req, res) => {
+            ordersService.showOrderDetailsPage(req, res);
+        })
+
+        const loginService = new LoginService(new UserRepository(this.conn));
+        expressRouter.get('/login', (req, res, next) => {
+            loginService.handleAlreadyLoggedIn(req, res, next);
+        }, (req, res) => {
+            loginService.showLoginPage(req, res);
+        })
+        expressRouter.post('/login', async (req, res) => {
+            loginService.handleLogin(req, res);
+        })
+        expressRouter.get('/logout', (req, res) => {
+            loginService.handleLogout(req, res);
+        })
+
+        return expressRouter;
+    }
+}
+
+module.exports = ShopRouter;
