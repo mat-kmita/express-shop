@@ -1,6 +1,8 @@
 const express = require('express');
-const router = express.Router();
-const repository = require('../../repository');
+const AdminsRepository = require('../../repository/admins-repository');
+const ProductsRepository = require('../../repository/products-repository');
+const UserRepository = require('../../repository/user-repository');
+const OrdersRepository = require('../../repository/orders-repository');
 
 class AdminRouter {
     constructor(dbConnection) {
@@ -8,9 +10,10 @@ class AdminRouter {
     }
 
     createRouter() {
+        const router = express.Router();
         const AdminSession = require('./admin-session');
-        const AdminsRepository = new repository.AdminsRepository(this.conn);
-        const AdminSessionService = new AdminSession(AdminsRepository);
+        const adminsRepository = new AdminsRepository(this.conn);
+        const AdminSessionService = new AdminSession(adminsRepository);
 
         router.get('*', (req, res, next) => {
             return AdminSessionService.authenticateAdmin(req, res, next);
@@ -28,8 +31,8 @@ class AdminRouter {
 
 
         const AdminProducts = require('./admin-products');
-        let ProductsRepository = new repository.ProductsRepository(this.conn);
-        const AdminProductsService = new AdminProducts(ProductsRepository);
+        const productsRepository = new ProductsRepository(this.conn);
+        const AdminProductsService = new AdminProducts(productsRepository);
 
         router.get('/products', async (req, res) => {
             await AdminProductsService.showProductsPage(req, res);
@@ -51,15 +54,15 @@ class AdminRouter {
         });
 
         const AdminUsers = require('./admin-users');
-        const UsersRepository = new repository.UserRepository(this.conn);
-        const AdminUsersService = new AdminUsers(UsersRepository);
+        const usersRepository = new UserRepository(this.conn);
+        const AdminUsersService = new AdminUsers(usersRepository);
         router.get('/users', async (req, res) => {
             await AdminUsersService.showUsersPage(req, res);
         });
 
         const AdminOrders = require('./admin-orders');
-        const OrdersRepository = new repository.OrdersRepository(this.conn)
-        const AdminOrdersService = new AdminOrders(OrdersRepository);
+        const ordersRepository = new OrdersRepository(this.conn)
+        const AdminOrdersService = new AdminOrders(ordersRepository);
         router.get('/orders', async (req, res) => {
             await AdminOrdersService.showOrdersPage(req, res);
         });
