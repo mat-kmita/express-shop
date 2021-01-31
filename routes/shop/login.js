@@ -61,7 +61,7 @@ class LoginService {
             }
         }
 
-        res.redirect('/');
+        return res.redirect('back');
     }
 
     handleLogout(req, res) {
@@ -73,7 +73,7 @@ class LoginService {
             console.error('Error in logout!');
             console.error(err);
         }
-        return res.redirect('/');
+        return res.redirect('back');
     }
 }
 
