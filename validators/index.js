@@ -41,6 +41,25 @@ let validateRegistrationForm = (form) => {
     return validationResult;
 }
 
+let validateProduct = (product) => {
+    if(!product.name || product.name.length < 5) {
+        return false
+    } else if(!product.description || product.description.length < 5) {
+        return false;
+    }  else if(!product.price) {
+        return false;
+    }
+
+    let re = new RegExp('^(?:0|(?:[1-9][0-9]*?))(?:(?:.|,)[0-9]{1,2})?$', 'gm');
+    return re.test(product.price);
+}
+
+let validQuantity = (quantity) => {
+    return Number.isInteger(quantity) && quantity >= 0;
+}
+
 module.exports = {
-    validateRegistrationForm: validateRegistrationForm
+    validateRegistrationForm: validateRegistrationForm,
+    validateProduct: validateProduct,
+    validQuantity: validQuantity
 }
