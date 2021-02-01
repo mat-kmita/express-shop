@@ -4,7 +4,7 @@ class OrdersProductsRepository {
     }
 
     async getProductsForOrder(orderId) {
-        let query = 'SELECT * FROM orders_products JOIN products ON products.id = orders_products.product_id WHERE orders_products.order_id = $1';
+        let query = 'SELECT * FROM orders_products LEFT JOIN products ON products.id = orders_products.product_id WHERE orders_products.order_id = $1';
         let result;
 
         try {

@@ -27,14 +27,26 @@
                     <tbody>
                         <% products.forEach(function(product) { %>
                             <tr>
-                                <td>
-                                    <a href="/products/<%= product.id %>">
-                                        <%= product.name %>
-                                    </a>
-                                </td>
-                                <td><%= product.quantity %></td>
-                                <td><%= product.price %> zł.</td>
-                                <td><%= product.price * product.quantity %> zł.</td>
+                                    <% if(product.id == null) { %>
+                                        <td>
+
+                                        Nieistniejący produkt!
+                                    </td>
+
+                                    <% } else { %>
+                                    <td>
+
+                                        <a href="/products/<%= product.id %>">
+                                            <%= product.name %>
+                                        </a>
+                                    </td>
+
+                                    <% } %>
+                                    <td><%= product.quantity %></td>
+                                    <td><%= product.price /100 %> zł.</td>
+                                    <td><%= product.price /100 * product.quantity %> zł.</td>
+
+ 
                             </tr>
                         <% }); %>
                     </tbody>
@@ -45,7 +57,7 @@
                             <p class="text-start"><a href="/orders">Powrót do wszystkich zamówień</a></p>
                         </div>
                         <div class="col">
-                            <p class="text-end"><strong>Cena całkowita: <%= totalPrice %> zł.</strong</p>
+                            <p class="text-end"><strong>Cena całkowita: <%= totalPrice /100 %> zł.</strong</p>
                         </div>
                     </div>
                 </div>
