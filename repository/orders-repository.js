@@ -80,6 +80,29 @@ class OrdersRepository {
 
         return result;
     }
+
+    async createNew(userId, products) {
+        let result = null;
+        await this.conn.tx(async t => {
+            let newOrder = await t.one('INSERT INTO orders(user_id) VALUES ($1) RETURNING id', [userId]);
+            let newOrderId = parseInt(newOrder.id);
+            console.log('order id: ' + JSON.stringify(newOrderId))
+
+            for(const product of products) {
+                await t.none('INSERT INTO orders_products(order_id, product_id, quantity, price) VALUES ($1, $2, $3, $4)', [newOrderId, product.id, product.quantity, product.price]);
+            }
+
+            return t.one('UPDATE orders SET amount = (SELECT sum(price) FROM orders_products WHERE order_id = $1) WHERE id = $2 RETURNING id', [newOrderId, newOrderId]);
+        }).then(d => {
+            result = d.id;
+        }).catch(err => {
+            console.error('Error in transaction!');
+            console.error(err.message);
+            result = null;
+        });
+
+        return result;
+    }
 }
 
 module.exports = OrdersRepository;

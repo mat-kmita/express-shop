@@ -5,6 +5,7 @@ const LoginService = require('./login');
 const RegistrationService = require('./registration');
 const ProductsService = require('./products');
 const CartService = require('./cart');
+const NewOrderService = require('./new-order');
 const OrdersRepository = require('../../repository/orders-repository');
 const OrdersProductsRepository = require('../../repository/orders-products-repository'); 
 const UserRepository = require('../../repository/user-repository');
@@ -77,6 +78,16 @@ class ShopRouter {
         },  async (req, res) => {
             await cartService.deleteFromCart(req, res);
         });
+
+        const order = new NewOrderService(new ProductsRepository(this.conn), new OrdersRepository(this.conn));
+        expressRouter.get('/order', async (req, res, next) => {
+            await order.validateCart(req, res, next);
+        }, (req, res) => {
+            order.showNewOrderPage(req, res);
+        })
+        expressRouter.post('/order/add', async (req, res) => {
+            await order.handleNewOrder(req, res);
+        })
 
         return expressRouter;
     }

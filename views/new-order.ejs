@@ -1,0 +1,102 @@
+<html>
+
+<head>
+    <title>Sklep - złóż zamówienie</title>
+    <meta charset="utf-8" />
+
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+
+<body>
+    <%- include('topbar'); %>
+
+
+        <main class="container">
+            <div class="py-5 text-center">
+                <h2>Składanie zamówienia</h2>
+                <p class="lead">Poniżej widzisz podsumowanie twojego zamówienia. Naciśnij przycisk, aby je potwierdzić.
+                </p>
+            </div>
+            <% if(removedProducts.length != 0 || modifiedProducts.length != 0) { %>
+                <div class="alert alert-danger">
+                    Uwaga! Niektóre produkty w koszyku uległy zmianie!
+                </div> 
+                <% } %>
+
+                <% if (removedProducts.length != 0) { %>
+            <div class="row">
+                <h4>
+                    Produkty niedostępne
+                </h4>
+                <table class="table">
+                    <thead>
+                      <tr>
+                        <th scope="col">Nazwa</th>
+                        <th scope="col">Ilość</th>
+                        <th scope="col">Cena za sztukę</th>
+                        <th scope="col">Cena</th>
+                      </tr>
+                    </thead>
+                    <tbody class="text-muted">
+                        <% removedProducts.forEach(function(product) { %>
+                            <tr>
+                                <td><%= product.name %></td>
+                                <td><%= product.quantity %></td>
+                                <td><%= product.price / 100 %> zł.</td>
+                                <td><%= product.price / 100 * product.quantity %> zł.</td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                  </table>        
+            </div>
+            <% } %>
+            <div class="row">
+                <h4>
+                    Produkty w koszyku
+                </h4>
+                <% if(validProducts.length == 0) { %>
+                    <div class="alert alert-info" role="alert">
+                        W twoim koszyku nie ma żadnych produktów.
+                    </div>
+                <% } else { %>
+                    <form method="POST" action="/order/add">
+                    <table class="table">
+                        <thead>
+                          <tr>
+                            <th scope="col">Nazwa</th>
+                            <th scope="col">Ilość</th>
+                            <th scope="col">Cena za sztukę</th>
+                            <th scope="col">Cena</th>
+                          </tr>
+                        </thead>
+                        <tbody >
+                            <% validProducts.forEach(function(product) { %>
+                                <tr>
+                                    <td><%= product.name %></td>
+                                    <td><%= product.quantity %></td>
+                                    <td><%= product.price / 100 %> zł.</td>
+                                    <td><%= product.price / 100 * product.quantity %> zł.</td>
+                                </tr>
+                            <% }) %>
+                            <% modifiedProducts.forEach(function(product) { %>
+                                <tr>
+                                    <td><span class="badge bg-warning">Uległ modyfikacji!</span> <%= product.inDb.name %></td>
+                                    <td><%= product.inCart.quantity %></td>
+                                    <td><%= product.inDb.price / 100 %> zł.</td>
+                                    <td><%= product.inDb.price / 100 * product.inCart.quantity %> zł.</td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                      </table>
+                      Suma: <%= totalPrice / 100 %> zł. <% } %>
+                      <button type="submit" class="btn btn-primary btn-large">Złóż zamówienie</button>
+                    </form>
+            </div>
+
+
+        </main>
+
+        <script src="/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
