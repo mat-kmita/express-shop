@@ -6,7 +6,8 @@ class AdminOrdersService {
     }
 
     async showOrdersPage(req, res) {
-        let pageInt = req.query.page ? parseInt(req.query.page) : 1;
+        let pageInt = req.query.page? parseInt(req.query.page) : 1;
+        if(isNaN(pageInt)) return res.end('Invalid page query parameter! Must be an integer!');
 
         let ordersCount = await this.ordersRepository.getCount();
         let ordersData = await this.ordersRepository.getPage(pageInt, 20);

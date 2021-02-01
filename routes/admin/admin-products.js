@@ -6,7 +6,8 @@ class AdminProductsService {
     }
 
     async showProductsPage(req, res) {
-        let pageInt = (!req.query.page)? 1: parseInt(req.query.page);
+        let pageInt = (req.query.page)? parseInt(req.query.page): 1;
+        if(isNaN(pageInt)) return res.end('Invalid page query parameter! Must be an integer!');
     
         let productsCount = await this.productsRepository.getCountOfProducts();
         let productsData = await this.productsRepository.getPage(pageInt, 10);
@@ -42,6 +43,8 @@ class AdminProductsService {
     
     async showEditProductPage(req, res) {
         let productId = parseInt(req.params.productId);
+        if(isNaN(productId)) return res.end('Invalid product id! Must be an integer!');
+
         let productData = await this.productsRepository.get(productId);
     
         if(productData == null) return res.end('Invalid id!');
@@ -59,6 +62,8 @@ class AdminProductsService {
     
     async handleEditProduct(req, res) {
         let productId = parseInt(req.params.productId);
+        if(isNaN(productId)) return res.end('Invalid product id! Must be an integer!');
+
         let editedProduct = {
             name: req.body.name,
             description: req.body.description,
@@ -75,9 +80,10 @@ class AdminProductsService {
     
     async handleDeleteProduct(req, res) {
         let productIdInt = parseInt(req.params.productId);
-        let result = await this.productsRepository.delete(productIdInt);
-    
-        res.end('deleted');
+        if(isNaN(productIdInt)) return res.end('Invalid product id! Must be an integer!');
+
+        await this.productsRepository.delete(productIdInt);
+        return res.redirect('back');
     }
 }
 

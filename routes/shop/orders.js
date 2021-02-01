@@ -11,6 +11,8 @@ class OrdersService {
 
     async showOrdersListPage(req, res) {
         let currentPageInt = req.query.page ? parseInt(req.query.page) : 1;
+        if(isNaN(currentPageInt)) return res.end('Invalid page query paramter! Must be an integer!');
+
         let session = new UserSession(req.session);
 
         let ordersCount = await this.ordersRepository.getCountForUser(session.getUser().id);
@@ -31,6 +33,8 @@ class OrdersService {
 
     async handleUnathorizedAccessToOrder(req, res, next) {
         const orderIdInt = parseInt(req.params.orderId);
+        if(isNaN(orderIdInt)) return res.end('Invalid order id! Must be an integer!');
+
         let orderData = await this.ordersRepository.get(orderIdInt);
 
         let session = new UserSession(req.session);
@@ -44,6 +48,7 @@ class OrdersService {
     async showOrderDetailsPage(req, res) {
         let session = new UserSession(req.session);
         let orderIdInt = parseInt(req.params.orderId);
+        if(isNaN(orderIdInt)) return res.end('Invalid order id! Must be an integer!');
 
         let products = await this.ordersProductsRepository.getProductsForOrder(orderIdInt);
 

@@ -1,5 +1,5 @@
 const UserSession = require('../../models/user-session');
-
+const Validators = require('../../validators');
 
 class CartService {
     constructor(productsRepository) {
@@ -12,6 +12,7 @@ class CartService {
         }
 
         const idInt = parseInt(req.body.id);
+        if(isNaN(idInt)) return res.end('Invalid product Id!');
 
         let product = await this.productsRepository.get(idInt);
         if (product == null) {
@@ -26,8 +27,13 @@ class CartService {
         const session = new UserSession(req.session);
         const quantity = parseInt(req.body.quantity);
 
+        if(!Validators.validQuantity(quantity)) return res.end('Invalid quantity input! Must be an integer!');
+
         if(quantity == 0) {
-            session.deleteFromCart(parseInt(req.body.id));
+            const idInt = parseInt(req.body.id);
+            if(isNaN(idInt)) return res.end('Invalid product id! Must be an integer!');
+
+            session.deleteFromCart(idInt);
         } else {
             session.addToCart(res.locals.productData, quantity);
         }
@@ -39,7 +45,10 @@ class CartService {
     deleteFromCart(req, res) {
         const session = new UserSession(req.session);
 
-        session.deleteFromCart(parseInt(req.body.id));
+        const idInt = parseInt(req.body.id);
+        if(isNaN(idInt)) return res.end('Invalid product id! Must be an integer!');
+
+        session.deleteFromCart(idInt);
         req.session.save((err) => {
             return res.redirect('back');
         })
