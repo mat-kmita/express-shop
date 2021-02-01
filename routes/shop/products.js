@@ -10,7 +10,7 @@ class ProductsService {
         const productIdInt = parseInt(req.params.productId);
         if(isNaN(productIdInt)) return res.end('Invalid product id! Must be an integer!');
 
-        const productData = await this.productsRepository.get();
+        const productData = await this.productsRepository.get(productIdInt);
 
         if(productData == null) {
             return res.status(404).render('product-not-found');
