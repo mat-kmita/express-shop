@@ -1,0 +1,61 @@
+<html>
+
+<head>
+    <title>Sklep</title>
+    <meta charset="utf-8" />
+
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+
+<body>
+    <%- include('topbar'); %>
+
+        <div class="container">
+            <main>
+                <div class="py-5 text-center">
+                    <h2>
+                        <%= product.name %>
+                    </h2>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-md-5 col-lg-4 order-md-last">
+                        <h4 class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="text-muted">Dodaj do koszyka</span>
+                        </h4>
+
+                        <% if (!session.loggedIn) { %>
+                            <div class="alert alert-info" role="alert">
+                                Zaloguj się, aby dodać produkt do koszyka!
+                            </div>
+                            <% } else { %>
+                                <form class="card p-2" method="POST" action="/cart/add">
+                                    <div class="input-group">
+                                        <input type="hidden" name="id" value="<%= product.id %>"> 
+                                        <input type="text" class="form-control" placeholder="Ilość" type="number" name="quantity" value="<%= cartQuantity %>">
+                                        <button type="submit" class="btn btn-primary">Zapisz w koszyku</button>
+                                    </div>
+                                </form>
+                                <% if (cartQuantity != 0) { %>
+                                        <form class="card p-2" method="POST" action="/cart/delete">
+                                                <input type="hidden" name="id" value="<%= product.id %>"> 
+                                                <button type="submit" class="btn btn-secondary">Usuń z koszyka</button>
+                                        </form>
+                                    <% } %>
+                            <% } %>
+                    </div>
+                    <div class="col-md-7 col-lg-8">
+                        <h4 class="mb-3 text-muted">Informacje o produkcie</h4>
+                        <h3 class="mb-3">Cena produktu: <%= product.price / 100 %> zł.</h3>
+                        <p>
+                            <%= product.description %>
+                        </p>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <script src="/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
