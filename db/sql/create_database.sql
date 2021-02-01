@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS orders(
 
 CREATE TABLE IF NOT EXISTS orders_products(
     order_id INTEGER NOT NULL REFERENCES orders(id),
-    product_id INTEGER NOT NULL REFERENCES products(id) ON DELETE SET NULL,
+    product_id INTEGER REFERENCES products(id) ON DELETE SET NULL,
     quantity INTEGER NOT NULL,
     price INTEGER NOT NULL 
 );
