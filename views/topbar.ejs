@@ -26,10 +26,19 @@
                 Mój koszyk
               </a>
               <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <li><a class="dropdown-item" href="#">Produkt 1</a></li>
-                <li><a class="dropdown-item" href="#">Produkt 2</a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item link-primary" href="#">Złóż zamówienie</a></li>
+                <% if (session.cartEmpty) { %>
+                  <li><span class="dropdown-item">Twój koszyk jest pusty!</span></li>
+                <% } else { %>
+                  <li><h6 class="dropdown-header">Przedmioty w koszyku</h6></li>
+                  <% session.cart.forEach(function(product) { %>
+                    <li><a class="dropdown-item" href="/products/<%= product.id %>"><%= product.name %> - Ilośc: <%= product.quantity %> - Cena: <%= product.price * product.quantity / 100 %> zł.</a></li>
+                  <% }); %>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><span class="dropdown-item">Suma: <%= session.cartTotal / 100 %>zł.</span></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><a class="dropdown-item link-primary" href="#">Złóż zamówienie</a></li>
+                <% } %>
+
               </ul>
             </li>
         <% } else { %>
