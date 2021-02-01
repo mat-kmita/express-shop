@@ -3,9 +3,12 @@ const RestrictedAccessService = require('./restricted');
 const OrdersService = require('./orders');
 const LoginService = require('./login');
 const RegistrationService = require('./registration');
+const ProductsService = require('./products');
+const CartService = require('./cart');
 const OrdersRepository = require('../../repository/orders-repository');
 const OrdersProductsRepository = require('../../repository/orders-products-repository'); 
 const UserRepository = require('../../repository/user-repository');
+const ProductsRepository = require('../../repository/products-repository');
 
 class ShopRouter {
     constructor(dbConnection) {
@@ -16,9 +19,9 @@ class ShopRouter {
         const expressRouter = express.Router();
 
         const restrictedAccessService = new RestrictedAccessService();
-        const restrictedPaths = ['/orders', '/orders/:id', '/cart', '/order'];
-        expressRouter.get(restrictedPaths, (req, res, next) => {
-            restrictedAccessService.allowLoggedIn('unauthorized', 'sessionValue')(req, res, next);
+        const restrictedPaths = ['/orders', '/orders/:id', '/cart', '/cart/*', '/order'];
+        expressRouter.all(restrictedPaths, (req, res, next) => {
+            restrictedAccessService.allowLoggedIn('unauthorized', 'user')(req, res, next);
         });
 
         const ordersService = new OrdersService(new OrdersRepository(this.conn), new OrdersProductsRepository(this.conn));
@@ -52,6 +55,28 @@ class ShopRouter {
         expressRouter.post('/register', async (req, res) => {
             await registrationService.handleRegistration(req, res);
         })
+
+        const productsService = new ProductsService(new ProductsRepository(this.conn));
+        expressRouter.get('/products/:productId', 
+        async (req, res, next) => {
+            await productsService.handleInvalidProduct(req, res, next);
+        }, 
+        async (req, res) => {
+            await productsService.showProductPage(req, res);
+        })
+
+        const cartService = new CartService(new ProductsRepository(this.conn));
+        expressRouter.post('/cart/add', async (req, res, next) => {
+            await cartService.handleInvalidProduct(req, res, next);
+        },  async (req, res) => {
+            await cartService.updateCart(req, res);
+        });
+
+        expressRouter.post('/cart/delete', async (req, res, next) => {
+            await cartService.handleInvalidProduct(req, res, next);
+        },  async (req, res) => {
+            await cartService.deleteFromCart(req, res);
+        });
 
         return expressRouter;
     }
