@@ -13,13 +13,13 @@ class OrdersService {
         let currentPageInt = req.query.page ? parseInt(req.query.page) : 1;
         let session = new UserSession(req.session);
 
-        let ordersCount = await this.ordersRepository.getCountForUser(session.getUserId());
+        let ordersCount = await this.ordersRepository.getCountForUser(session.getUser().id);
 
         let pagination = new Pagination(this.pageLength, currentPageInt, ordersCount.count);
 
         console.log('Will get orders!');
-        console.log(`User id: ${session.getUserId()}, page: ${pagination.currentPage}, page length: ${pagination.pageLength}`)
-        let ordersData = await this.ordersRepository.getPageForUser(session.getUserId(), pagination.currentPage, pagination.pageLength);
+        console.log(`User id: ${session.getUser().id}, page: ${pagination.currentPage}, page length: ${pagination.pageLength}`)
+        let ordersData = await this.ordersRepository.getPageForUser(session.getUser().id, pagination.currentPage, pagination.pageLength);
         let paginationModel = pagination.createModel();
 
         return res.render('orders', {
@@ -34,7 +34,7 @@ class OrdersService {
         let orderData = await this.ordersRepository.get(orderIdInt);
 
         let session = new UserSession(req.session);
-        if(orderData == null || orderData.user_id != session.getUserId()) {
+        if(orderData == null || orderData.user_id != session.getUser().id) {
             return res.status(403).end('You don\'t have parmission to access this order\'s data');
         }
 
