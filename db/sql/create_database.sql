@@ -10,20 +10,14 @@ CREATE TABLE IF NOT EXISTS products(
 CREATE TABLE IF NOT EXISTS users(
     id SERIAL NOT NULL UNIQUE,
     username TEXT PRIMARY KEY ,
-    password_hash TEXT NOT NULL,
-    first_name TEXT,
-    last_name TEXT,
-    address_street TEXT,
-    address_building_number INTEGER,
-    address_flat_number INTEGER,
-    address_city TEXT,
-    address_postal_code TEXT
+    password_hash TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS orders(
     id SERIAL PRIMARY KEY,
-    user_id INTEGER NOT NULL REFERENCES users(id), 
-    address TEXT NOT NULL
+    user_id INTEGER NOT NULL REFERENCES users(id),
+    date DATE NOT NULL DEFAULT CURRENT_DATE,
+    amount INTEGER NOT NULL DEFAULT 0 
 );
 
 CREATE TABLE IF NOT EXISTS orders_products(
