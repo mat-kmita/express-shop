@@ -71,6 +71,10 @@ class UserSession {
     deleteFromCart(id) {
         this.cartModel.removeProductFromCart(id);
     }
+
+    emptyCart() {
+        this.cartModel.emptyCart();
+    }
 }
 
 module.exports = UserSession;

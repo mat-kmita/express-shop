@@ -47,6 +47,10 @@ class CartModel {
         return !this.cart || this.cart.length == 0;
     }
 
+    emptyCart() {
+        this.cart.splice(0, this.cart.length);
+    }
+
     getTotalPrice() {
         return this.cart.reduce((totalPrice, item) => { return totalPrice + item.price * item.quantity; }, 0);
     }
