@@ -20,8 +20,6 @@ class Pagination {
                 const maxPage = Math.ceil(this.elementsCount / this.pageLength);
                 result.isFirstPage = this.currentPage === 1;
                 result.isLastPage = this.currentPage === maxPage;
-
-                console.log(`Is first page: ${result.isFirstPage}, is last page: ${result.isLastPage}, max page: ${maxPage}`);
             }
         }
     

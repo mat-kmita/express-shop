@@ -4,7 +4,6 @@ class CartModel {
     }
 
     getProductFromCart(id) {
-        console.log(`Cart inside cart model is: ${JSON.stringify(this.cart)}`);
         for (const product of this.cart) {
             if (product.id == id)
                 return product;
