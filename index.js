@@ -33,7 +33,7 @@ app.use('/', shopRoutes);
 async function main() {
     db.initializeDatabase();
 
-    http.createServer(app).listen(8080);
+    http.createServer(app).listen(process.env.PORT, '0.0.0.0');
 }
 
 main();
