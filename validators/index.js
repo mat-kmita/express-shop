@@ -42,15 +42,16 @@ let validateRegistrationForm = (form) => {
 }
 
 let validateProduct = (product) => {
-    if(!product.name || product.name.length < 5) {
+    if(!product.name) {
         return false
-    } else if(!product.description || product.description.length < 5) {
+    } else if(!product.description) {
         return false;
     }  else if(!product.price) {
         return false;
     }
 
-    let re = new RegExp('^(?:0|(?:[1-9][0-9]*?))(?:(?:.|,)[0-9]{1,2})?$', 'gm');
+    console.log(product.price);
+    let re = new RegExp('^(?:0|(?:[1-9][0-9]*?))(?:.[0-9]{1,2})?$');
     return re.test(product.price);
 }
 
