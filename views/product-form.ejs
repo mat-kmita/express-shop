@@ -6,13 +6,13 @@
     </div>
     <div class="mb-3">
       <label for="descriptionInput" class="form-label">Opis produktu</label>
-      <textarea class="form-control" id="descriptionInput" aria-describedby="descriptionHelp" name="description" value="<%= product.description %>"></textarea>
+      <textarea class="form-control" id="descriptionInput" aria-describedby="descriptionHelp" name="description"><%= product.description %></textarea>
       <div id="descriptionHelp" class="form-text">Podaj szczegółowy opis produktu.</div>
     </div>
     <div class="mb-3">
         <label for="descriptionInput" class="form-label">Cena produktu</label>
         <input type="text" class="form-control" id="descriptionInput" aria-describedby="descriptionHelp" name="price" value="<%= product.price %>"></textarea>
-        <div id="descriptionHelp" class="form-text">Podaj cenę produktu w polskich złotych.</div>        
+        <div id="descriptionHelp" class="form-text">Podaj cenę produktu w polskich złotych. Użyj znaku kropki ('.') do oddzielenie część całkowitej od ułamkowej.</div>        
     </div>
     <button type="submit" class="btn btn-primary">Dodaj</button>
   </form>

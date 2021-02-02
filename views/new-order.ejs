@@ -77,7 +77,7 @@
                                     <td><%= product.price / 100 %> zł.</td>
                                     <td><%= product.price / 100 * product.quantity %> zł.</td>
                                 </tr>
-                            <% }) %>
+                            <% }); %>
                             <% modifiedProducts.forEach(function(product) { %>
                                 <tr>
                                     <td><span class="badge bg-warning">Uległ modyfikacji!</span> <%= product.inDb.name %></td>
@@ -85,12 +85,13 @@
                                     <td><%= product.inDb.price / 100 %> zł.</td>
                                     <td><%= product.inDb.price / 100 * product.inCart.quantity %> zł.</td>
                                 </tr>
-                            <% }) %>
+                            <% }); %>
                         </tbody>
                       </table>
-                      Suma: <%= totalPrice / 100 %> zł. <% } %>
+                      Suma: <%= totalPrice / 100 %> zł. %> 
                       <button type="submit" class="btn btn-primary btn-large">Złóż zamówienie</button>
                     </form>
+                    <% } %>
             </div>
 
 
