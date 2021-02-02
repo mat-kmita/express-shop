@@ -40,18 +40,18 @@ class UserSession {
         }
     }
 
-    logIn(user) {
+    logIn(user, cb) {
         this.session.user = user;
         this.session.cart = [];
 
         this.session.save((err) => {
             if(err) throw 'Cannot log in!';
 
-            return;
+            return cb();
         })
     }
 
-    logout() {
+    logout(cb) {
         if(this.session == null) {
             throw 'No user logged in!';
         }
@@ -59,13 +59,12 @@ class UserSession {
         this.session.destroy((err) => {
             if(err) throw 'Cannot log out!';
 
-            return;
+            return cb();
         });
     }
 
     addToCart(product, quantity) {
         this.cartModel.addOrUpdateProduct(product, quantity);
-
     }
 
     deleteFromCart(id) {

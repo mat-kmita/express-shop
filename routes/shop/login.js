@@ -51,7 +51,10 @@ class LoginService {
     
         if(!session.isUserLoggedIn()) {
             try {
-                session.logIn(user);
+                session.logIn(user, () => {
+                    console.log('will redirect back!');
+                    return res.redirect('back');
+                });
             } catch(err) {
                 console.error('Cannot log in!');
                 return res.render('login', {
@@ -60,20 +63,19 @@ class LoginService {
                 });
             }
         }
-
-        return res.redirect('back');
     }
 
     handleLogout(req, res) {
         const session = new UserSession(req.session);
         
         try {
-            session.logout();
+            session.logout( () => {
+                return res.redirect('back');
+            });
         } catch(err) {
             console.error('Error in logout!');
             console.error(err);
         }
-        return res.redirect('back');
     }
 }
 

@@ -37,6 +37,7 @@ class CartService {
         } else {
             session.addToCart(res.locals.productData, quantity);
         }
+
         req.session.save((err) => {
             return res.redirect('back');
         })
