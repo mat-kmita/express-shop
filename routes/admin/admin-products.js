@@ -1,4 +1,5 @@
 const Pagination = require('../../models/pagination');
+const Validators = require('../../validators/index');
 
 class AdminProductsService {
     constructor(productsRepository) {
@@ -30,15 +31,17 @@ class AdminProductsService {
         let newProduct = {
             name: req.body.name,
             description: req.body.description,
-            price: parseFloat(req.body.price) * 100
+            price: req.body.price
+        }
+
+        if(!Validators.validateProduct(newProduct)) {
+            return res.end('invalid input!');
         }
     
+        newProduct.price = parseFloat(newProduct.price) * 100;
         let result = await this.productsRepository.insert(newProduct);
     
-        if(result == null) {
-        }
-    
-        res.end('addedd new product!');
+        return res.redirect('/admin/products');
     }
     
     async showEditProductPage(req, res) {
@@ -67,15 +70,21 @@ class AdminProductsService {
         let editedProduct = {
             name: req.body.name,
             description: req.body.description,
-            price: parseInt(req.body.price) * 100
+            price: req.body.price
         }
+
+        if(!Validators.validateProduct(editedProduct)) {
+            return res.end('invalid input!');
+        }
+    
+        editedProduct.price = parseFloat(editedProduct.price) * 100;
         let result = await this.productsRepository.update(productId, editedProduct);
     
         if(result == null) {
             return res.end('Something wrong!');
         }
     
-        res.end('finished editing!');
+        return res.redirect('/admin/products')
     }
     
     async handleDeleteProduct(req, res) {
