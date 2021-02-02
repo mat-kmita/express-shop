@@ -1,4 +1,5 @@
 const express = require('express');
+
 const RestrictedAccessService = require('./restricted');
 const OrdersService = require('./orders');
 const LoginService = require('./login');
@@ -6,6 +7,9 @@ const RegistrationService = require('./registration');
 const ProductsService = require('./products');
 const CartService = require('./cart');
 const NewOrderService = require('./new-order');
+const MainService = require('./main');
+const SearchService = require('./search');
+
 const OrdersRepository = require('../../repository/orders-repository');
 const OrdersProductsRepository = require('../../repository/orders-products-repository'); 
 const UserRepository = require('../../repository/user-repository');
@@ -87,6 +91,16 @@ class ShopRouter {
         })
         expressRouter.post('/order/add', async (req, res) => {
             await order.handleNewOrder(req, res);
+        })
+
+        const mainService = new MainService(new ProductsRepository(this.conn));
+        expressRouter.get('/', (req, res) => {
+            mainService.showMainPage(req, res);
+        })
+
+        const searchService = new SearchService(new ProductsRepository(this.conn));
+        expressRouter.get('/search', async (req, res) => {
+            await searchService.showSearchPage(req, res);
         })
 
         return expressRouter;

@@ -1,12 +1,49 @@
 <html>
-    <head>
-        <title>Sklep</title>
-        <meta charset="utf-8"/>
 
-        <link href="/css/bootstrap.min.css" rel="stylesheet"/>
-    </head>
-    <body>
-        <%- include('topbar'); %>
+<head>
+    <title>Sklep</title>
+    <meta charset="utf-8" />
+
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+
+<body>
+    <%- include('topbar'); %>
         <script src="/js/bootstrap.bundle.min.js"></script>
-    </body>
+
+        <main class="container">
+            <div class="py-5 text-center">
+                <h2>Witaj</h2>
+                <p class="lead">Poniżej widzisz produkty dostępne w sklepie.
+                </p>
+            </div>
+            <div class="container">
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+                    <% products.forEach(function(product) { %>
+                        <div class="col">
+                            <div class="card shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title"><%= product.name %></h5>
+                                    <p class="card-text"><%= product.description %></p>
+                                    <p class="card-text text-primary">Cena: <%= product.price /100 %> zł.</p>
+                                    <a href="/products/<%= product.id %>" class="btn btn-primary">Szczegóły</a>
+                                </div>
+                            </div>
+                        </div>
+                    <% }); %>
+                </div>
+                <nav aria-label="...">
+                    <ul class="pagination justify-content-end mt-3 mr-3">
+                      <li class="page-item <%if (page.isFirstPage) { %> disabled <% } %>">
+                        <a class="page-link" href="/?page=<%= page.currentPage - 1 %>">Poprzednie</a>
+                      </li>
+                      <li class="page-item <%if (page.isLastPage) { %> disabled <% } %>">
+                        <a class="page-link" href="/?page=<%= page.currentPage + 1 %>">Następne</a>
+                      </li>
+                    </ul>
+                  </nav>
+            </div>
+        </main>
+</body>
+
 </html>

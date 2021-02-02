@@ -30,7 +30,21 @@ class ProductsRepository {
             result = null;
         }
 
-        console.log(`Fetch result: ${result}`);
+        return result;
+    }
+
+    async findByName(name) {
+        let regexString = `%${name}%`;
+        let query = 'SELECT * FROM products WHERE name ILIKE $1';
+        let result;
+
+        try {
+            result = await this.conn.manyOrNone(query, regexString);
+        } catch(err) {
+            console.error('Error while searching for products!');
+            console.error(err.message);
+            result = [];
+        }
 
         return result;
     }

@@ -1,0 +1,63 @@
+<html>
+
+<head>
+    <title>Sklep - zmień swoje dane</title>
+    <meta charset="utf-8" />
+
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+
+<body>
+    <%- include('topbar'); %>
+
+        <main>
+            <div class="py-5 text-center container">
+                <h2>Wyszukiwanie</h2>
+                <p class="lead">Znajdź produkty</p>
+                <form class="d-flex justify-content-center" action="/search" method="GET">
+                    <input class="form-control me-2" type="search" placeholder="Znajdź produkt" aria-label="Search" name="query" value="<%= query %>">
+                    <button class="btn btn-primary" type="submit">Szukaj</button>
+                  </form>
+            </div>
+            <% if(products != null) { %>
+            <div class="container">
+                    <% if(products.length == 0) { %>
+                        <div class="alert alert-warning" role="alert">
+                            Nie znaleziono żadnych produktów!
+                        </div>
+                    <% } else { %>
+                        <table class="table table-lg m-0">
+                            <thead class="">
+                                <tr>
+                                    <th>Nazwa produktu</th>
+                                    <th>Cena</th>
+                                    <th>Szczegóły</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% products.forEach(function(product) { %>
+                                    <tr>
+                                        <td>
+                                            <%= product.name %>
+                                        </td>
+                                        <td>
+                                            <%= product.price / 100 %> zł.
+                                        </td>
+                                        <td>
+                                            <a href="/products/<%= product.id %>">Szczegóły</a>
+                                        </td>
+                                    </tr>
+
+                                <% }); %>
+                            </tbody>
+                        </table>
+                        <% } %>
+            </div>
+            <% } %>
+            </div>
+        </main>
+
+        <script src="/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
